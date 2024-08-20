@@ -6,7 +6,7 @@ CREATE TABLE tasks (
     status VARCHAR(20) NOT NULL DEFAULT 'ongoing',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    deadline TIMESTAMP,
+    deadline TIMESTAMP
 );
 
 -- Create the sub_tasks table
@@ -20,7 +20,7 @@ CREATE TABLE sub_tasks (
 );
 
 -- Insert dummy data into tasks
-INSERT INTO tasks (title, description, status, deadline, progress) VALUES
+INSERT INTO tasks (title, description, status, deadline ) VALUES
 ('Task 1', 'Description for Task 1', 'ongoing', '2024-08-30 10:00:00'),
 ('Task 2', 'Description for Task 2', 'completed', '2024-09-15 12:00:00'),
 ('Task 3', 'Description for Task 3', 'pending', '2024-09-20 15:00:00');
