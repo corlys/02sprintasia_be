@@ -25,7 +25,7 @@ export const updateSubTaskById = async (id: number, subTask: SubTask) => {
 };
 
 export const getSubTaskByIdQuery = async (id: number) => {
-  return db.query.subtasks.findFirst({
+  return db.query.subTasks.findFirst({
     where: eq(subTasks.id, id),
   });
 };

@@ -3,8 +3,8 @@ import { StatusCodes } from "http-status-codes";
 import {
   deleteSubTaskById,
   getSubTaskByIdQuery,
-  insertSubTask
-  updateSubTaskById,,
+  insertSubTask,
+  updateSubTaskById,
 } from "../services/subTasks";
 import {
   CreateSubTodoRequest,
@@ -36,9 +36,9 @@ export const deleteSubTask = async (req: Request, res: Response) => {
     if (!result.success)
       return res.status(StatusCodes.BAD_REQUEST).json({ error: "BAD_REQUEST" });
     const { id } = result.data;
-    const deletedId = await deleteSubTaskById(id);
+    const deletionResult = await deleteSubTaskById(id);
     return res.status(StatusCodes.OK).json({
-      message: `Successfully deleted subtask with id ${deletedId}`,
+      message: `Successfully deleted subtask with id ${deletionResult[0].deletedId}`,
     });
   } catch (error) {
     console.log(error);
@@ -62,10 +62,10 @@ export const updateSubTask = async (req: Request, res: Response) => {
       if (completed === "true") subTask.completed = true;
       else subTask.completed = false;
     }
-    const updatedId = await updateSubTaskById(id, subTask)
+    const updateResult = await updateSubTaskById(id, subTask);
     return res.status(StatusCodes.OK).json({
-      message: `Succefully updated subtask with id ${updatedId}`
-    })
+      message: `Succefully updated subtask with id ${updateResult[0].updatedId}`,
+    });
   } catch (error) {
     console.log(error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

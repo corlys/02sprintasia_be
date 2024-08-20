@@ -37,9 +37,9 @@ export const deleteTask = async (req: Request, res: Response) => {
     if (!result.success)
       return res.status(StatusCodes.BAD_REQUEST).json({ error: "BAD_REQUEST" });
     const { id } = result.data;
-    const deletedId = await deleteTaskById(id);
+    const deletionResult = await deleteTaskById(id);
     return res.status(StatusCodes.OK).json({
-      message: `Successfully deleted task with id ${deletedId} cascade`,
+      message: `Successfully deleted task with id ${deletionResult[0].deletedId} cascade`,
     });
   } catch (error) {
     console.log(error);
@@ -61,9 +61,9 @@ export const updateTask = async (req: Request, res: Response) => {
     if (title) task.title = title;
     if (description) task.description = description;
     if (status) task.status = status;
-    const updatedId = await updateTaskById(id, task);
+    const updateResult = await updateTaskById(id, task);
     return res.status(StatusCodes.OK).json({
-      message: `Successfully updated task by id ${updatedId}`,
+      message: `Successfully updated task by id ${updateResult[0].updatedId}`,
     });
   } catch (error) {
     console.log(error);
