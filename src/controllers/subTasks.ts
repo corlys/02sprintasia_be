@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import {
   deleteSubTaskById,
+  getCompletedSubTaskByTaskIdQuery,
   getSubTaskByIdQuery,
   insertSubTask,
   updateSubTaskById,
@@ -12,6 +13,7 @@ import {
   GetSubTodoRequest,
   UpdateSubTodoRequest,
 } from "../dto/request";
+import { getTaskByIdQuery, updateTaskById } from "../services/tasks";
 
 export const createSubtask = async (req: Request, res: Response) => {
   try {
@@ -19,7 +21,27 @@ export const createSubtask = async (req: Request, res: Response) => {
     if (!result.success)
       return res.status(StatusCodes.BAD_REQUEST).json({ error: "BAD_REQUEST" });
     const { title, taskId } = result.data;
-    await insertSubTask(title, taskId);
+    const creationResult = await insertSubTask(title, taskId);
+    const subTask = await getSubTaskByIdQuery(creationResult[0].createdId);
+    if (!subTask) throw Error("Technically Not Possible (?)");
+    const task = await getTaskByIdQuery(subTask.taskId);
+    if (task?.subTasks) {
+      const completedSubTasksByTaskId = await getCompletedSubTaskByTaskIdQuery(
+        subTask.taskId,
+      );
+      if (
+        task.subTasks.length === completedSubTasksByTaskId.length &&
+        task.subTasks.length !== 0
+      ) {
+        task.status = "finished";
+        await updateTaskById(subTask.taskId, task);
+      } else {
+        if (task.status !== "ongoing") {
+          task.status = "ongoing";
+          await updateTaskById(subTask.taskId, task);
+        }
+      }
+    }
     return res.status(StatusCodes.OK).json({
       message: "Successfully created a subtask",
     });
@@ -37,7 +59,28 @@ export const deleteSubTask = async (req: Request, res: Response) => {
     if (!result.success)
       return res.status(StatusCodes.BAD_REQUEST).json({ error: "BAD_REQUEST" });
     const { id } = result.data;
+    const subTask = await getSubTaskByIdQuery(id);
+    if (!subTask)
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "BAD_REQUEST" });
     const deletionResult = await deleteSubTaskById(id);
+    const task = await getTaskByIdQuery(subTask.taskId);
+    if (task?.subTasks) {
+      const completedSubTasksByTaskId = await getCompletedSubTaskByTaskIdQuery(
+        subTask.taskId,
+      );
+      if (
+        task.subTasks.length === completedSubTasksByTaskId.length &&
+        task.subTasks.length !== 0
+      ) {
+        task.status = "finished";
+        await updateTaskById(subTask.taskId, task);
+      } else {
+        if (task.status !== "ongoing") {
+          task.status = "ongoing";
+          await updateTaskById(subTask.taskId, task);
+        }
+      }
+    }
     return res.status(StatusCodes.OK).json({
       message: `Successfully deleted subtask with id ${deletionResult[0].deletedId}`,
     });
@@ -64,6 +107,24 @@ export const updateSubTask = async (req: Request, res: Response) => {
       else subTask.completed = false;
     }
     const updateResult = await updateSubTaskById(id, subTask);
+    const task = await getTaskByIdQuery(subTask.taskId);
+    if (task?.subTasks) {
+      const completedSubTasksByTaskId = await getCompletedSubTaskByTaskIdQuery(
+        subTask.taskId,
+      );
+      if (
+        task.subTasks.length === completedSubTasksByTaskId.length &&
+        task.subTasks.length !== 0
+      ) {
+        task.status = "finished";
+        await updateTaskById(subTask.taskId, task);
+      } else {
+        if (task.status !== "ongoing") {
+          task.status = "ongoing";
+          await updateTaskById(subTask.taskId, task);
+        }
+      }
+    }
     return res.status(StatusCodes.OK).json({
       message: `Succefully updated subtask with id ${updateResult[0].updatedId}`,
     });

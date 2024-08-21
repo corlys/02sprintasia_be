@@ -1,12 +1,15 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import db from "../db";
 import { SubTask, subTasks } from "../db/schema/subtasks";
 
 export const insertSubTask = async (title: string, taskId: number) => {
-  return db.insert(subTasks).values({
-    taskId,
-    title,
-  });
+  return db
+    .insert(subTasks)
+    .values({
+      taskId,
+      title,
+    })
+    .returning({ createdId: subTasks.id });
 };
 
 export const deleteSubTaskById = async (id: number) => {
@@ -32,6 +35,14 @@ export const getSubTaskByIdQuery = async (id: number) => {
 
 export const getSubTasksByTaskIdQUery = async (taskId: number) => {
   return db.query.subTasks.findMany({
+    orderBy: [desc(subTasks.id)],
     where: eq(subTasks.taskId, taskId),
+  });
+};
+
+export const getCompletedSubTaskByTaskIdQuery = async (taskId: number) => {
+  return db.query.subTasks.findMany({
+    orderBy: [desc(subTasks.id)],
+    where: and(eq(subTasks.taskId, taskId), eq(subTasks.completed, true)),
   });
 };
