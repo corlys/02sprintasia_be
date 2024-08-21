@@ -1,6 +1,8 @@
 # ERD
 
-![sprintasia_erd](https://github.com/user-attachments/assets/cf1ba713-92fb-4fbb-9dad-ce19add6001b)
+![sprintasia_erdver2](https://github.com/user-attachments/assets/5a6f5992-6b47-45dd-b5f2-ad6246a88052)
+
+if image is broken, please refer to the image sprintasia_erdver2.png on the root of the repository
 
 # How To Run The App
 
