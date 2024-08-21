@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import {
   CreateTodoRequest,
   DeleteTodoRequest,
+  GetTodoRequest,
   UpdateTodoRequest,
 } from "../dto/request";
 import { StatusCodes } from "http-status-codes";
@@ -78,6 +79,24 @@ export const getTasks = async (_: Request, res: Response) => {
     const tasks = await getTasksQuery();
     return res.status(StatusCodes.OK).json({
       tasks,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "INTERNAL_SERVER_ERROR",
+    });
+  }
+};
+
+export const getTask = async (req: Request, res: Response) => {
+  try {
+    const result = GetTodoRequest.safeParse(req.params);
+    if (!result.success)
+      return res.status(StatusCodes.NOT_FOUND).json({ error: "NOT_FOUND" });
+    const { id } = result.data;
+    const task = await getTaskByIdQuery(parseInt(id));
+    return res.status(StatusCodes.OK).json({
+      task,
     });
   } catch (error) {
     console.log(error);

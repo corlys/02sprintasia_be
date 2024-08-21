@@ -9,6 +9,7 @@ import {
 import {
   CreateSubTodoRequest,
   DeleteSubTodoRequest,
+  GetSubTodoRequest,
   UpdateSubTodoRequest,
 } from "../dto/request";
 
@@ -65,6 +66,24 @@ export const updateSubTask = async (req: Request, res: Response) => {
     const updateResult = await updateSubTaskById(id, subTask);
     return res.status(StatusCodes.OK).json({
       message: `Succefully updated subtask with id ${updateResult[0].updatedId}`,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "INTERNAL_SERVER_ERROR",
+    });
+  }
+};
+
+export const getSubTask = async (req: Request, res: Response) => {
+  try {
+    const result = GetSubTodoRequest.safeParse(req.params);
+    if (!result.success)
+      return res.status(StatusCodes.NOT_FOUND).json({ error: "NOT_FOUND" });
+    const { id } = result.data;
+    const subTask = await getSubTaskByIdQuery(parseInt(id));
+    return res.status(StatusCodes.OK).json({
+      subTask,
     });
   } catch (error) {
     console.log(error);

@@ -29,3 +29,9 @@ export const getSubTaskByIdQuery = async (id: number) => {
     where: eq(subTasks.id, id),
   });
 };
+
+export const getSubTasksByTaskIdQUery = async (taskId: number) => {
+  return db.query.subTasks.findMany({
+    where: eq(subTasks.taskId, taskId),
+  });
+};

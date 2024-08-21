@@ -16,6 +16,14 @@ export const UpdateTodoRequest = z.object({
   status: z.string().optional(),
 });
 
+export const GetTodoRequest = z.object({
+  id: z.string(),
+});
+
+export const GetSubTodoRequest = z.object({
+  id: z.string(),
+});
+
 export const CreateSubTodoRequest = z.object({
   title: z.string().min(1),
   taskId: z.number(),
