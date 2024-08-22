@@ -2,10 +2,15 @@ import { desc, eq } from "drizzle-orm";
 import db from "../db";
 import { Task, tasks } from "../db/schema/tasks";
 
-export const insertTask = async (title: string, description: string) => {
+export const insertTask = async (
+  title: string,
+  description: string,
+  deadline?: string,
+) => {
   return db.insert(tasks).values({
     title,
     description,
+    deadline: deadline ? new Date(deadline) : null,
   });
 };
 

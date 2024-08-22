@@ -3,6 +3,7 @@ import { z } from "zod";
 export const CreateTodoRequest = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
+  deadline: z.string().optional(),
 });
 
 export const DeleteTodoRequest = z.object({

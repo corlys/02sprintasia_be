@@ -19,8 +19,8 @@ export const createTask = async (req: Request, res: Response) => {
     const result = CreateTodoRequest.safeParse(req.body);
     if (!result.success)
       return res.status(StatusCodes.BAD_REQUEST).json({ error: "BAD_REQUEST" });
-    const { title, description } = result.data;
-    await insertTask(title, description);
+    const { title, description, deadline } = result.data;
+    await insertTask(title, description, deadline);
     return res.status(StatusCodes.OK).json({
       message: "Todo Successfully Created",
     });
